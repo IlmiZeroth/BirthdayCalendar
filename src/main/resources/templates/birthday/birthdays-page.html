@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Календарь</title>
+</head>
+<body>
+<h1>Дни рождения</h1>
+
+<p th:if="${#lists.isEmpty(birthdays)}">
+    Нет дней рождения
+</p>
+
+<ul th:if="${!#lists.isEmpty(birthdays)}">
+    <li th:each="birthday : ${birthdays}">
+        <span th:text="${birthday.name}">Имя</span>
+        —
+        <span th:text="${birthday.birthday}">Дата</span>
+    </li>
+</ul>
+</body>
+<div class = "footer-link-container">
+    <span class = "footer-link-container__text"> Добавить день рождения <a href = "/birthdays/add" class = "footer-link-container__link">Добавить</a></span>
+</div>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Sign Out"/>
+</form>
+</html>

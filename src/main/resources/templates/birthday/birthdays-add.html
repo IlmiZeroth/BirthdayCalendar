@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить день рождения</title>
+</head>
+<body>
+<form th:action="@{/birthdays/add}" method="post">
+    <div><label> Имя: <input type="text" name="name"/> </label></div>
+    <div><label> Дата: <input type="date" name="date"/> </label></div>
+    <div><label> Описание: <input type="text" name="description"/> </label></div>
+    <div><input type="submit" value="Добавить"/></div>
+</form>
+</body>
+</html>
