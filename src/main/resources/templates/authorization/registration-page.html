@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="css/login-styles.css">
+    <title>Регистрация</title>
+</head>
+<body>
+<div class="message-container">
+    <div th:if="${param.error}" class="error-message">
+        Имя пользователя занято!
+    </div>
+</div>
+<div class="container">
+    <div class="login-card">
+        <form th:action="@{/register}" method="post" class="login-form">
+            <h2>Регистрация</h2>
+
+            <input type="text" name="username" minlength="4" maxlength="100" required placeholder="Имя пользователя"/>
+            <input type="password" name="password" minlength="8" maxlength="64" required placeholder="Пароль"/>
+
+            <input type="submit" value="Зарегистрироваться"/>
+        </form>
+
+        <div class="login-footer">
+            Уже есть аккаунт?
+            <a href="/login">Войти</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
