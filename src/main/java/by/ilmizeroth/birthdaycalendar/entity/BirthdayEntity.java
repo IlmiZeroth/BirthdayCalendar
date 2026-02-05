@@ -18,7 +18,7 @@ public class BirthdayEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -28,6 +28,9 @@ public class BirthdayEntity {
 
     @Column(name = "date", nullable = false)
     private LocalDate birthday;
+
+    @Column(name = "photo")
+    private String photo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity owner;

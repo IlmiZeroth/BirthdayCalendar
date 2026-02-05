@@ -11,10 +11,4 @@ import java.util.List;
 public interface BirthdayRepository extends JpaRepository<BirthdayEntity, Long> {
 
     List<BirthdayEntity> findAllByOwnerId(Long ownerId);
-
-    List<BirthdayEntity> findAllByOwnerIdAndBirthdayBetween(
-            Long ownerId,
-            LocalDate start,
-            LocalDate end
-    );
 }

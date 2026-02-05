@@ -1,27 +1,190 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Календарь</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь дней рождений</title>
+    <link rel="stylesheet" href="css/birthdays-styles.css">
+    <script src="js/birthday.js" type="text/javascript" defer></script>
 </head>
 <body>
-<h1>Дни рождения</h1>
 
-<p th:if="${#lists.isEmpty(birthdays)}">
-    Нет дней рождения
-</p>
+<header class="header">
+    <div class="header-content">
+        <h1>Календарь дней рождений</h1>
+        <div class="year-display">
+            <span th:text="${currentYear}" class="current-year" id="currentYear"></span>
+        </div>
+        <div class="user-display">
+            <span th:text="${currentUserName}" class="current-user" id="currentUser"></span>
+            <a th:href="@{/logout}" class="action-btn exit-btn">
+                <img src="img/exit.svg" width="16" height="16">
+            </a>
+        </div>
+    </div>
+</header>
 
-<ul th:if="${!#lists.isEmpty(birthdays)}">
-    <li th:each="birthday : ${birthdays}">
-        <span th:text="${birthday.name}">Имя</span>
-        —
-        <span th:text="${birthday.birthday}">Дата</span>
-    </li>
-</ul>
+<main class="main-container">
+    <section class="calendar-section">
+        <div class="calendar-grid" id="calendarGrid">
+            <div class="month-card"
+                 th:each="month : ${months}">
+
+                <div class="month-header"
+                     th:text="${month.name}">
+                </div>
+
+                <div class="days-grid">
+                    <div class="day-label">Пн</div>
+                    <div class="day-label">Вт</div>
+                    <div class="day-label">Ср</div>
+                    <div class="day-label">Чт</div>
+                    <div class="day-label">Пт</div>
+                    <div class="day-label">Сб</div>
+                    <div class="day-label">Вс</div>
+
+                    <div th:each="day : ${month.days}"
+                         th:class="|day-cell${day.isEmpty ? ' empty' : ''}${day.hasBirthday ? ' has-birthday' : ''}${day.isToday ? ' today' : ''}|"
+                         th:attr="data-date=${day.date}"
+                         th:text="${day.day}">
+                    </div>
+
+                </div>
+            </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="sidebar-container">
+    <div class="birthdays-sidebar">
+        <div class="filter-info" id="filterInfo">
+            <button class="filter-btn active" id="allBirthdays">Все события</button>
+            <button class="filter-btn" id="nearestBirthdays">Ближайшие</button>
+        </div>
+
+        <div class="tab-content" id="allBirthdaysTab" style="display: block;">
+            <div class="birthdays-list" id="allBirthdaysList">
+                <div th:each="birthday : ${allBirthdays}"
+                     th:class="|birthday-card${birthday.isToday() ? ' today-card' : ''}|"
+                     th:data-birthday-id="${birthday.getId()}">
+                    <img th:src="${birthday.getSafePhoto()}" th:attr="alt=${birthday.getName()}" class="birthday-image">
+
+                    <div class="birthday-details">
+                        <div th:text="${birthday.getId()}" style="display: none;" class="birthday-id"></div>
+                        <div th:text="${birthday.getName()}" class="birthday-name"></div>
+                        <div th:text="${birthday.getBirthday()}" class="birthday-date"></div>
+                        <div th:text="${birthday.getDescription()}" class="birthday-description"></div>
+                    </div>
+                    <div class="birthday-actions">
+                        <button class="action-btn edit-btn" title="Редактировать">
+                            <img src="img/edit.svg" width="16" height="16">
+                        </button>
+                        <form th:action="@{/birthdays/delete}"
+                              method="post"
+                              class="delete-birthday-form"
+                              style="display: inline;">
+                            <input type="hidden" name="id" th:value="${birthday.getId()}">
+                            <button type="submit" class="action-btn delete-btn" title="Удалить">
+                                <img src="img/delete.svg" width="16" height="16">
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="nearBirthdaysTab" style="display: none;">
+            <div class="birthdays-list" id="nearBirthdaysList">
+                <div th:each="birthday : ${nearBirthdays}"
+                     th:class="|birthday-card${birthday.isToday() ? ' today-card' : ''}|"
+                     th:data-birthday-id="${birthday.getId()}">
+                    <img th:src="${birthday.getSafePhoto()}" th:attr="alt=${birthday.getName()}" class="birthday-image">
+
+                    <div class="birthday-details">
+                        <div th:text="${birthday.getId()}" style="display: none;" class="birthday-id"></div>
+                        <div th:text="${birthday.getName()}" class="birthday-name"></div>
+                        <div th:text="${birthday.getBirthday()}" class="birthday-date"></div>
+                        <div th:text="${birthday.getDescription()}" class="birthday-description"></div>
+                    </div>
+                    <div class="birthday-actions">
+                        <button class="action-btn edit-btn" title="Редактировать">
+                            <img src="img/edit.svg" width="16" height="16">
+                        </button>
+                        <form th:action="@{/birthdays/delete}"
+                              method="post"
+                              class="delete-birthday-form"
+                              style="display: inline;">
+                            <input type="hidden" name="id" th:value="${birthday.getId()}">
+                            <button type="submit" class="action-btn delete-btn" title="Удалить">
+                                <img src="img/delete.svg" width="16" height="16">
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="add-birthday-section">
+            <button class="toggle-form-btn" id="toggleFormBtn">
+                + Добавить событие
+            </button>
+
+            <form th:action="@{/birthdays/add}"
+                  method="post"
+                  class="add-birthday-form"
+                  id="addBirthdayForm"
+                  data-mode="add"
+                  style="display: none;">
+
+                <input type="hidden" name="id" id="birthdayId">
+
+                <div class="form-row">
+                    <input type="text"
+                           class="form-input"
+                           id="birthdayName"
+                           name="name"
+                           placeholder="Имя"
+                           maxlength="100"
+                           required>
+                </div>
+
+                <div class="form-row">
+                    <input type="date"
+                           class="form-input"
+                           id="birthdayDate"
+                           name="date"
+                           required>
+                </div>
+
+                <div class="form-row">
+                    <input type="text"
+                           class="form-input"
+                           id="birthdayImage"
+                           name="photo"
+                           maxlength="256"
+                           placeholder="URL изображения (необязательно)">
+                </div>
+
+                <div class="form-row">
+                        <textarea class="form-input"
+                                  id="birthdayDescription"
+                                  name="description"
+                                  placeholder="Описание (необязательно)"
+                                  maxlength="256"
+                                  rows="2"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="form-btn cancel-btn" id="cancelBtn">
+                        Отмена
+                    </button>
+                    <button type="submit" class="form-btn submit-btn">
+                        Сохранить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
 </body>
-<div class = "footer-link-container">
-    <span class = "footer-link-container__text"> Добавить день рождения <a href = "/birthdays/add" class = "footer-link-container__link">Добавить</a></span>
-</div>
-<form th:action="@{/logout}" method="post">
-    <input type="submit" value="Sign Out"/>
-</form>
 </html>
